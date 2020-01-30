@@ -1,63 +1,80 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import axios from 'axios';
 
-const UpdateMovie = (props) => {
-    const [movie, setMovie] = useState({id: props.match.params.id});
+function UpdateMovie(props) {
+ 
+    const [status, setStatus] = useState();
+    const [update, setUpdate] = useState({
+        title: '',
+        director: '',
+        metascore: '',
+        stars: []
+    })
 
-    const handleChange = e => {
-        setMovie({
-            ...movie,
-            [e.target.name]: e.target.value
-        });
-        console.log(movie);
-    };
-
-    const handleSubmit = e => {
-        e.preventDefault();
-        const MovieUpdater = {
-            ...movie,
-            stars: movie.stars.split(', '),
-        }
-
+    useEffect(() => {
         axios
-        .put('http://localhost:5000/api/movies/${props.match.params.id}', MovieUpdater)
-        .then(res => {
-            console.log(res);
-            document.querySelector('form').reset();
-            props.history.push('/')
+            .get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+            .then(res => {
+                setUpdate(res.data);
+            })
+    },[])
+
+    const handleChange = event => {
+        setUpdate({
+            ...update,
+            [event.target.name]: event.target.value
         })
-        .catch(err => {
-            console.log(err);
-        });
-    };
+    }
 
-    return (
+    const handleSubmit = event => {
+        event.preventDefault();
+        axios
+            .put(`http://localhost:5000/api/movies/${props.match.params.id}`, update)
+            .then(res => {
+                setStatus(res.statusText);
+                console.log(props);
+                props.history.push('/');
+            })
+    }
+
+    return(
         <div>
+            <h1>Update Movie</h1>
             <form onSubmit={handleSubmit}>
-                <input
-                    placeholder='Movie Name'
-                    name='title'
+                <label>Title: 
+                    <input 
+                    type='text' 
+                    placeholder='title' 
+                    name='title' 
+                    value={update.title} 
                     onChange={handleChange}
                     />
-                    <input
-                    placeholder='Director'
-                    name='director'
-                    onChange={handleChange}
-                    />
-                    <input
-                    placeholder='Metascore'
-                    name='metascore'
-                    onChange={handleChange}
-                    />
-                    <input
-                    placeholder='Stars'
-                    name='stars'
-                    onChange={handleChange}
-                    />
-                    <button type='submit'>Submit</button>
-            </form>
-        </div>
-    );
-};
+                </label>
 
-export default UpdateMovie;
+                <label>Director: 
+                    <input 
+                    type='text' 
+                    placeholder='director' 
+                    name='director' 
+                    value={update.director} 
+                    onChange={handleChange}
+                    />
+                </label>
+
+                <label>Metascore: 
+                    <input 
+                    type='number' 
+                    placeholder='metascore' 
+                    name='metascore' 
+                    value={update.metascore} 
+                    onChange={handleChange}
+                    />
+                </label>
+                <button>Submit</button>
+            </form>
+            {status ? <p>{status}</p> : null}
+        </div>
+    )
+}
+
+export default UpdateMovie; 
