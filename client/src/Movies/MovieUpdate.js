@@ -1,8 +1,8 @@
 import React, { useEffect,useState } from 'react';
 import axios from 'axios';
 
-function UpdateMovie(props) {
- 
+function MovieUpdate(props) {
+
     const [status, setStatus] = useState();
     const [update, setUpdate] = useState({
         title: '',
@@ -12,8 +12,7 @@ function UpdateMovie(props) {
     })
 
     useEffect(() => {
-        axios
-            .get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+        axios.get(`http://localhost:5000/api/movies/${props.match.params.id}`)
             .then(res => {
                 setUpdate(res.data);
             })
@@ -28,8 +27,7 @@ function UpdateMovie(props) {
 
     const handleSubmit = event => {
         event.preventDefault();
-        axios
-            .put(`http://localhost:5000/api/movies/${props.match.params.id}`, update)
+        axios.put(`http://localhost:5000/api/movies/${props.match.params.id}`, update)
             .then(res => {
                 setStatus(res.statusText);
                 console.log(props);
@@ -41,35 +39,9 @@ function UpdateMovie(props) {
         <div>
             <h1>Update Movie</h1>
             <form onSubmit={handleSubmit}>
-                <label>Title: 
-                    <input 
-                    type='text' 
-                    placeholder='title' 
-                    name='title' 
-                    value={update.title} 
-                    onChange={handleChange}
-                    />
-                </label>
-
-                <label>Director: 
-                    <input 
-                    type='text' 
-                    placeholder='director' 
-                    name='director' 
-                    value={update.director} 
-                    onChange={handleChange}
-                    />
-                </label>
-
-                <label>Metascore: 
-                    <input 
-                    type='number' 
-                    placeholder='metascore' 
-                    name='metascore' 
-                    value={update.metascore} 
-                    onChange={handleChange}
-                    />
-                </label>
+                <label>Title: <input type='text' placeholder='title' name='title' value={update.title} onChange={handleChange}/></label>
+                <label>Director: <input type='text' placeholder='director' name='director' value={update.director} onChange={handleChange}/></label>
+                <label>Metascore: <input type='number' placeholder='metascore' name='metascore' value={update.metascore} onChange={handleChange}/></label>
                 <button>Submit</button>
             </form>
             {status ? <p>{status}</p> : null}
@@ -77,4 +49,4 @@ function UpdateMovie(props) {
     )
 }
 
-export default UpdateMovie; 
+export default MovieUpdate;
